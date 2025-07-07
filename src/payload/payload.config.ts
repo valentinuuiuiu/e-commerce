@@ -12,23 +12,24 @@ import dotenv from 'dotenv'
 import path from 'path'
 import { buildConfig } from 'payload/config'
 
+import Ads from './collections/Ads' // Import the new Ads collection
 import Categories from './collections/Categories'
 import { Media } from './collections/Media'
-import { Orders } from './collections/Orders'
+// import { Orders } from './collections/Orders' // Removed Orders
 import { Pages } from './collections/Pages'
-import Products from './collections/Products'
+// import Products from './collections/Products' // Removed Products
 import Users from './collections/Users'
 import BeforeDashboard from './components/BeforeDashboard'
 import BeforeLogin from './components/BeforeLogin'
-import { createPaymentIntent } from './endpoints/create-payment-intent'
-import { customersProxy } from './endpoints/customers'
-import { productsProxy } from './endpoints/products'
-import { seed } from './endpoints/seed'
+// import { createPaymentIntent } from './endpoints/create-payment-intent' // Removed
+// import { customersProxy } from './endpoints/customers' // Removed
+// import { productsProxy } from './endpoints/products' // Removed
+// import { seed } from './endpoints/seed' // Removed for now
 import { Footer } from './globals/Footer'
 import { Header } from './globals/Header'
 import { Settings } from './globals/Settings'
-import { priceUpdated } from './stripe/webhooks/priceUpdated'
-import { productUpdated } from './stripe/webhooks/productUpdated'
+// import { priceUpdated } from './stripe/webhooks/priceUpdated' // Removed as product webhooks are disabled
+// import { productUpdated } from './stripe/webhooks/productUpdated' // Removed as product webhooks are disabled
 
 const generateTitle: GenerateTitle = () => {
   return 'My Store'
@@ -60,7 +61,8 @@ export default buildConfig({
           alias: {
             ...config.resolve?.alias,
             dotenv: path.resolve(__dirname, './dotenv.js'),
-            [path.resolve(__dirname, 'collections/Products/hooks/beforeChange')]: mockModulePath,
+            // Removed mock for Products hooks: [path.resolve(__dirname, 'collections/Products/hooks/beforeChange')]: mockModulePath,
+            // Kept Users related mocks as Users collection is still used, though some internal hooks were removed from its config
             [path.resolve(__dirname, 'collections/Users/hooks/createStripeCustomer')]:
               mockModulePath,
             [path.resolve(__dirname, 'collections/Users/endpoints/customer')]: mockModulePath,
@@ -82,7 +84,7 @@ export default buildConfig({
   }),
   // database-adapter-config-end
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,
-  collections: [Pages, Products, Orders, Media, Categories, Users],
+  collections: [Pages, Ads, Media, Categories, Users], // Removed Products, Orders
   globals: [Settings, Header, Footer],
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
@@ -97,50 +99,31 @@ export default buildConfig({
     Boolean,
   ),
   endpoints: [
-    {
-      path: '/create-payment-intent',
-      method: 'post',
-      handler: createPaymentIntent,
-    },
-    {
-      path: '/stripe/customers',
-      method: 'get',
-      handler: customersProxy,
-    },
-    {
-      path: '/stripe/products',
-      method: 'get',
-      handler: productsProxy,
-    },
-    // The seed endpoint is used to populate the database with some example data
-    // You should delete this endpoint before deploying your site to production
-    {
-      path: '/seed',
-      method: 'get',
-      handler: seed,
-    },
+    // All e-commerce and seed endpoints removed for now
+    // If a new seed endpoint is needed for 'Ads', it will be added here later.
   ],
   plugins: [
     // formBuilder({}),
-    stripePlugin({
+    stripePlugin({ // Stripe plugin kept for potential future use (e.g. ad credits)
       stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
       isTestKey: Boolean(process.env.PAYLOAD_PUBLIC_STRIPE_IS_TEST_KEY),
       stripeWebhooksEndpointSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET,
       rest: false,
-      webhooks: {
-        'product.created': productUpdated,
-        'product.updated': productUpdated,
-        'price.updated': priceUpdated,
-      },
+      // Removed product-specific webhooks as Products collection is removed
+      // webhooks: {
+      //   'product.created': productUpdated,
+      //   'product.updated': productUpdated,
+      //   'price.updated': priceUpdated,
+      // },
     }),
     redirects({
-      collections: ['pages', 'products'],
+      collections: ['pages', 'ads'], // Removed 'products'
     }),
     nestedDocs({
       collections: ['categories'],
     }),
     seo({
-      collections: ['pages', 'products'],
+      collections: ['pages', 'ads'], // Removed 'products'
       generateTitle,
       uploadsCollection: 'media',
     }),

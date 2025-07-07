@@ -1,0 +1,80 @@
+@import '../../_css/common';
+
+.container {
+  padding-top: var(--gutter-h);
+  padding-bottom: calc(var(--gutter-h) * 2);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+.error {
+  background-color: var(--theme-error-400);
+  color: var(--theme-error-900);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.adsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.adCard {
+  border: 1px solid var(--theme-elevation-200);
+  padding: 16px;
+  border-radius: 8px;
+  background-color: var(--theme-elevation-50);
+  display: flex;
+  flex-direction: column;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+
+    a {
+      text-decoration: none;
+      color: var(--theme-text);
+
+      &:hover {
+        color: var(--theme-primary-500);
+        text-decoration: underline;
+      }
+    }
+  }
+
+  p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--theme-text-secondary); // A new variable, or use existing like var(--theme-text)
+                                     // For now, let's assume it exists or use var(--theme-text)
+                                     // If not, we might need to add it to _css/colors.scss or theme.scss
+  }
+
+  // If `theme-text-secondary` is not defined, use a slightly muted color or just theme-text
+  p {
+     color: #555; // Placeholder if theme-text-secondary is not available
+     @include dark {
+        color: #bbb; // Placeholder for dark mode
+     }
+  }
+
+
+  .detailsLink {
+    margin-top: auto; // Pushes the link to the bottom of the card
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: var(--theme-primary-500);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: var(--theme-primary-600);
+    }
+  }
+}

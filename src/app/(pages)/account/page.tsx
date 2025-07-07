@@ -41,7 +41,7 @@ export default async function Account() {
             type: 'paragraph',
             children: [
               {
-                text: 'This is your account dashboard. Here you can update your account information, view your purchased products, and browse your order history. To manage all users, ',
+                text: 'This is your account dashboard. Here you can update your account information and manage your ads. To manage all users, ',
               },
               {
                 type: 'link',
@@ -59,47 +59,25 @@ export default async function Account() {
       <Gutter className={classes.account}>
         <AccountForm />
         <HR />
-        <h2>Purchased Products</h2>
+        <h2>My Ads</h2>
         <p>
-          These are the products you have purchased over time. This provides a way for you to access
-          digital assets or gated content behind a paywall. This is different from your orders,
-          which are directly associated with individual payments.
-        </p>
-        <div>
-          {user?.purchases?.length || 0 > 0 ? (
-            <ul className={classes.purchases}>
-              {user?.purchases?.map((purchase, index) => {
-                return (
-                  <li key={index} className={classes.purchase}>
-                    {typeof purchase === 'string' ? (
-                      <p>{purchase}</p>
-                    ) : (
-                      <h4>
-                        <Link href={`/products/${purchase.slug}`}>{purchase.title}</Link>
-                      </h4>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
-          ) : (
-            <div className={classes.noPurchases}>You have no purchases.</div>
-          )}
-        </div>
-        <HR />
-        <h2>Orders</h2>
-        <p>
-          These are the orders you have placed over time. Each order is associated with an payment
-          intent. As you order products, they will appear in your "purchased products" list.
+          Manage your posted ads, view their status, and make edits.
         </p>
         <Button
-          className={classes.ordersButton}
-          href="/orders"
+          href="/account/my-ads"
           appearance="primary"
-          label="View orders"
+          label="View My Ads"
+          className={classes.accountButton}
         />
+        {/* If cart is kept for credits, a section for credits/packages might go here later */}
+        {/* For example:
         <HR />
-        <Button href="/logout" appearance="secondary" label="Log out" />
+        <h2>My Credits / Ad Packages</h2>
+        <p>View your credit balance or purchase new ad packages.</p>
+        <Button href="/account/credits" appearance="secondary" label="Manage Credits" className={classes.accountButton}/>
+        */}
+        <HR />
+        <Button href="/logout" appearance="secondary" label="Log out" className={classes.accountButton} />
       </Gutter>
     </Fragment>
   )
