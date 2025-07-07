@@ -1,25 +1,24 @@
 .account {
   margin-bottom: var(--block-padding);
+
+  h2 {
+    margin-top: calc(var(--base) * 2); // Add some space above new section titles
+    margin-bottom: var(--base);
+  }
+
+  p {
+    margin-bottom: calc(var(--base) * 1.5);
+  }
 }
 
 .params {
   margin-top: var(--base);
 }
 
-.purchases {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--base);
-}
+// Removed .purchases, .purchase, .noPurchases styles
 
-.purchase {
-  > * {
-    margin: 0;
-  }
-}
-
-.noPurchases {
-  font-weight: 600;
+.accountButton {
+  margin-bottom: calc(var(--base) * 1.5); // Add some margin below buttons too
+  min-width: 200px; // Give buttons a decent minimum width
+  text-align: center;
 }

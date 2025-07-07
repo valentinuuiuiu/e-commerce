@@ -1,0 +1,177 @@
+@import './_css/common';
+
+.homePage {
+  padding-top: var(--gutter-h);
+  padding-bottom: calc(var(--gutter-h) * 2);
+}
+
+.hero {
+  text-align: center;
+  padding: 3rem var(--gutter-h);
+  margin-bottom: 3rem;
+  background-color: var(--theme-elevation-100);
+  border-radius: var(--theme-radius);
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--theme-text-accent, var(--theme-primary-500)); // Use accent or primary
+    @include small-break {
+      font-size: 2rem;
+    }
+  }
+
+  p {
+    font-size: 1.125rem;
+    color: var(--theme-text-secondary, #555);
+    margin-bottom: 2rem;
+  }
+
+  .ctaButton,
+  .ctaButtonSecondary {
+    display: inline-block;
+    padding: 0.8rem 1.8rem;
+    font-size: 1rem;
+    border-radius: var(--theme-button-radius, 4px);
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    margin: 0.5rem;
+    border: 2px solid transparent;
+  }
+
+  .ctaButton {
+    background-color: var(--theme-primary-500);
+    color: var(--theme-elevation-0); // white or very light
+    &:hover {
+      background-color: var(--theme-primary-600);
+    }
+  }
+  .ctaButtonSecondary {
+    background-color: transparent;
+    color: var(--theme-primary-500);
+    border-color: var(--theme-primary-500);
+    &:hover {
+      background-color: alpha(var(--theme-primary-500), 0.1);
+      color: var(--theme-primary-600);
+      border-color: var(--theme-primary-600);
+    }
+  }
+}
+
+.error {
+  background-color: var(--theme-error-400);
+  color: var(--theme-error-900);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 2rem;
+}
+
+.categoriesSection,
+.recentAdsSection {
+  margin-bottom: 3rem;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.25rem; // HR will add more space
+  }
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.categoryCard {
+  display: block;
+  padding: 1.5rem 1rem;
+  background-color: var(--theme-elevation-100);
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: var(--theme-radius);
+  text-align: center;
+  font-weight: 500;
+  color: var(--theme-text);
+  text-decoration: none;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px alpha(var(--theme-elevation-900), 0.1);
+    background-color: var(--theme-elevation-150, var(--theme-elevation-200)); // Fallback if 150 not defined
+    color: var(--theme-primary-500);
+  }
+}
+
+.adsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.adCard {
+  border: 1px solid var(--theme-elevation-200);
+  padding: 1rem;
+  border-radius: var(--theme-radius);
+  background-color: var(--theme-elevation-50);
+  display: flex;
+  flex-direction: column;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    a {
+      text-decoration: none;
+      color: var(--theme-text);
+      &:hover {
+        color: var(--theme-primary-500);
+      }
+    }
+  }
+
+  .adPrice {
+    font-weight: bold;
+    color: var(--theme-success-600, #28a745); // Success or primary color
+    margin-bottom: 0.25rem;
+  }
+
+  .adLocation {
+    font-size: 0.85rem;
+    color: var(--theme-text-secondary, #666);
+    margin-bottom: 0.75rem;
+  }
+
+  .detailsLink {
+    margin-top: auto; // Pushes the link to the bottom
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    background-color: var(--theme-primary-500);
+    color: var(--theme-elevation-0);
+    text-decoration: none;
+    border-radius: var(--theme-button-radius, 4px);
+    text-align: center;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: var(--theme-primary-600);
+    }
+  }
+}
+
+.viewAllLink {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--theme-primary-500);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+        text-decoration: underline;
+        color: var(--theme-primary-600);
+    }
+}

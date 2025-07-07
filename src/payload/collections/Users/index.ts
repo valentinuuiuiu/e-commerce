@@ -4,12 +4,9 @@ import { admins } from '../../access/admins'
 import { anyone } from '../../access/anyone'
 import adminsAndUser from './access/adminsAndUser'
 import { checkRole } from './checkRole'
-import { customerProxy } from './endpoints/customer'
-import { createStripeCustomer } from './hooks/createStripeCustomer'
 import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
 import { loginAfterCreate } from './hooks/loginAfterCreate'
-import { resolveDuplicatePurchases } from './hooks/resolveDuplicatePurchases'
-import { CustomerSelect } from './ui/CustomerSelect'
+// Removed Stripe customer related imports: customerProxy, createStripeCustomer, CustomerSelect, resolveDuplicatePurchases
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -25,21 +22,11 @@ const Users: CollectionConfig = {
     admin: ({ req: { user } }) => checkRole(['admin'], user),
   },
   hooks: {
-    beforeChange: [createStripeCustomer],
-    afterChange: [loginAfterCreate],
+    // beforeChange: [createStripeCustomer], // Removed createStripeCustomer
+    afterChange: [loginAfterCreate], // loginAfterCreate hook is fine
   },
   auth: true,
-  endpoints: [
-    {
-      path: '/:teamID/customer',
-      method: 'get',
-      handler: customerProxy,
-    },
-    {
-      path: '/:teamID/customer',
-      method: 'patch',
-      handler: customerProxy,
-    },
+  endpoints: [ // Removed customerProxy endpoints
   ],
   fields: [
     {
@@ -50,15 +37,15 @@ const Users: CollectionConfig = {
       name: 'roles',
       type: 'select',
       hasMany: true,
-      defaultValue: ['customer'],
+      defaultValue: ['user'], // Changed default role to 'user'
       options: [
         {
-          label: 'admin',
+          label: 'Admin', // Changed label for clarity
           value: 'admin',
         },
         {
-          label: 'customer',
-          value: 'customer',
+          label: 'User', // Changed label for clarity
+          value: 'user',
         },
       ],
       hooks: {
@@ -70,79 +57,11 @@ const Users: CollectionConfig = {
         update: admins,
       },
     },
+    // Removed 'purchases' field
+    // Removed 'stripeCustomerID' field
+    // Removed 'cart' field
     {
-      name: 'purchases',
-      label: 'Purchases',
-      type: 'relationship',
-      relationTo: 'products',
-      hasMany: true,
-      hooks: {
-        beforeChange: [resolveDuplicatePurchases],
-      },
-    },
-    {
-      name: 'stripeCustomerID',
-      label: 'Stripe Customer',
-      type: 'text',
-      access: {
-        read: ({ req: { user } }) => checkRole(['admin'], user),
-      },
-      admin: {
-        position: 'sidebar',
-        components: {
-          Field: CustomerSelect,
-        },
-      },
-    },
-    {
-      label: 'Cart',
-      name: 'cart',
-      type: 'group',
-      fields: [
-        {
-          name: 'items',
-          label: 'Items',
-          type: 'array',
-          interfaceName: 'CartItems',
-          fields: [
-            {
-              name: 'product',
-              type: 'relationship',
-              relationTo: 'products',
-            },
-            {
-              name: 'quantity',
-              type: 'number',
-              min: 0,
-              admin: {
-                step: 1,
-              },
-            },
-          ],
-        },
-        // If you wanted to maintain a 'created on'
-        // or 'last modified' date for the cart
-        // you could do so here:
-        // {
-        //   name: 'createdOn',
-        //   label: 'Created On',
-        //   type: 'date',
-        //   admin: {
-        //     readOnly: true
-        //   }
-        // },
-        // {
-        //   name: 'lastModified',
-        //   label: 'Last Modified',
-        //   type: 'date',
-        //   admin: {
-        //     readOnly: true
-        //   }
-        // },
-      ],
-    },
-    {
-      name: 'skipSync',
+      name: 'skipSync', // This field seems generic, keeping it for now.
       label: 'Skip Sync',
       type: 'checkbox',
       admin: {
