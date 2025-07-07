@@ -115,7 +115,6 @@ export default async function MyAdsPage() {
                   onClick={() => handleDelete(ad.id)} // handleDelete would be in a client component
                 />
                 */}
-                 <span className={classes.deletePlaceholder}>Delete (coming soon)</span>
               </div>
             </div>
           ))}
