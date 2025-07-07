@@ -1,4 +1,4 @@
-# Payload Marketplace Template (Inspired by Publi24.ro)
+# Payload Marketplace Template 
 
 This template, originally forked from the official [Payload E-Commerce Template](https://github.com/payloadcms/payload/blob/main/templates/ecommerce), has been modified to function as a classified ads marketplace, similar to sites like Publi24.ro. It allows users to post, browse, and manage ads across various categories. This repo includes a fully-working backend using PayloadCMS, an admin panel, and a Next.js frontend.
 
