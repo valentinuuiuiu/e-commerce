@@ -233,7 +233,7 @@ Then, a `paywall` field is added to the `product` with `read` access control set
 
 ## Layout Builder
 
-Create unique product and page layouts for any type fo content using a powerful layout builder. This template comes pre-configured with the following layout building blocks:
+Create unique product and page layouts for any type of content using a powerful layout builder. This template comes pre-configured with the following layout building blocks:
 
 - Hero (can be used for static pages)
 - Content (for static pages like "About Us", "Terms")
