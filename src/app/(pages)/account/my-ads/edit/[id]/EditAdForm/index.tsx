@@ -291,7 +291,7 @@ export const EditAdForm: React.FC<Props> = ({ user, ad, categories }) => {
                 <select {...field} id="status" className={classes.select}>
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
-                    <option value="archived">Archived</option>
+                    <option value: "archived">Archived</option>
                 </select>
             )}
         />

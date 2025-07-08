@@ -1,24 +1,4 @@
 /* eslint-disable */
-
-// Sanitizes a value based on its type to prevent XSS
-function sanitizeValue(value, type) {
-    if (type === 'number') {
-        return isNaN(Number(value)) ? 0 : Number(value);
-    }
-    // Escape special characters for strings
-    return value.replace(/[&<>"'`=\/]/g, function (char) {
-        return {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#x27;',
-            '`': '&#x60;',
-            '=': '&#x3D;',
-            '/': '&#x2F;'
-        }[char];
-    });
-}
 var addSorting = (function() {
     'use strict';
     var cols,
@@ -106,7 +86,9 @@ var addSorting = (function() {
             colNode = tableCols[i];
             col = cols[i];
             val = colNode.getAttribute('data-value');
-            val = sanitizeValue(val, col.type);
+            if (col.type === 'number') {
+                val = Number(val);
+            }
             data[col.key] = val;
         }
         return data;
