@@ -1,0 +1,109 @@
+@import '../../../_css/common';
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; // Spacing between form elements/groups
+  margin-top: 2rem;
+  padding: 2rem;
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 8px;
+  background-color: var(--theme-elevation-50);
+
+  label,
+  .label { // For direct label elements or custom ones
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: var(--theme-text);
+  }
+
+  .textarea,
+  .select,
+  .selectMultiple {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--theme-elevation-300);
+    border-radius: 4px;
+    background-color: var(--theme-elevation-100); // Slightly different from page bg
+    color: var(--theme-text);
+    font-size: 1rem;
+
+    &:focus {
+      border-color: var(--theme-primary-500);
+      outline: none;
+      box-shadow: 0 0 0 2px alpha(var(--theme-primary-500), 0.2);
+    }
+  }
+
+  .selectMultiple {
+      min-height: 100px; // Make it easier to see multiple options
+  }
+
+  .errorMessage {
+    color: var(--theme-error-500);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .priceCurrency {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end; /* Align items to bottom for better layout with labels */
+
+    > div:first-child { // Assuming Input component wraps in a div
+      flex-grow: 1;
+    }
+
+    .select {
+      width: auto; // Don't let currency select take full width
+      min-width: 80px;
+      margin-bottom: calc(var(--base) / 2); // Align with Input's internal structure if needed
+    }
+  }
+
+  .subheading {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--theme-elevation-200);
+    padding-bottom: 0.5rem;
+  }
+
+  .fieldDescription {
+    font-size: 0.875rem;
+    color: var(--theme-text-secondary, #666); // Fallback color
+    margin-bottom: 1rem;
+    margin-top: -0.5rem; // Pull it closer to the element it describes
+  }
+
+  .submitButton {
+    margin-top: 1rem;
+    width: 100%;
+    @include small-break {
+        width: auto;
+        align-self: flex-start; // Align to left on larger screens
+    }
+  }
+}
+
+// Styles for the page wrapper if needed (e.g. src/app/(pages)/post-ad/index.module.scss)
+// For now, putting it here for completeness, but it can be in its own file.
+.container { // This would be for the Gutter component on the page.tsx
+  padding-top: var(--gutter-h);
+  padding-bottom: calc(var(--gutter-h) * 2);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+
+  h1 {
+    margin-bottom: 0; // HR will provide spacing
+  }
+}
+
+.error { // For errors fetched server-side in page.tsx (like category fetch error)
+  background-color: var(--theme-error-400);
+  color: var(--theme-error-900);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}

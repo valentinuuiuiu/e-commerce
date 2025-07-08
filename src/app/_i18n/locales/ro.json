@@ -1,0 +1,80 @@
+{
+  "homepage": {
+    "welcomeTitle": "Bun venit pe Piața Ta Online!",
+    "welcomeSubtitle": "Găsește ce ai nevoie sau vinde ce nu-ți mai trebuie.",
+    "postAdButton": "Adaugă Anunț",
+    "browseAdsButton": "Vezi Anunțuri",
+    "categoriesTitle": "Categorii",
+    "recentAdsTitle": "Anunțuri Recente",
+    "noCategoriesFound": "Nicio categorie găsită.",
+    "noRecentAds": "Niciun anunț recent de afișat.",
+    "viewAllCategoriesLink": "Vezi Toate Categoriile",
+    "viewAllAdsLink": "Vezi Toate Anunțurile"
+  },
+  "adsPage": {
+    "title": "Anunțuri",
+    "noAdsFound": "Niciun anunț găsit.",
+    "priceLabel": "Preț:",
+    "locationLabel": "Locație:",
+    "typeLabel": "Tip:",
+    "viewDetailsButton": "Vezi Detalii"
+  },
+  "adDetailPage": {
+    "backToAdsLink": "Înapoi la Anunțuri",
+    "descriptionTitle": "Descriere",
+    "contactSellerTitle": "Contactează Vânzătorul",
+    "nameLabel": "Nume:",
+    "emailLabel": "Email:",
+    "phoneLabel": "Telefon:",
+    "contactNotProvided": "Informațiile de contact nu au fost furnizate de vânzător.",
+    "statusLabel": "Stare:",
+    "categoriesLabel": "Categorii:"
+  },
+  "postAdForm": {
+    "titleLabel": "Titlu",
+    "descriptionLabel": "Descriere",
+    "priceLabel": "Preț",
+    "currencyLabel": "Monedă",
+    "locationLabel": "Locație",
+    "adTypeLabel": "Tip Anunț",
+    "categoriesLabel": "Categorii",
+    "contactNameLabel": "Nume Contact",
+    "contactPhoneLabel": "Telefon Contact",
+    "contactEmailLabel": "Email Contact",
+    "statusLabel": "Stare",
+    "createAdButton": "Creează Anunț",
+    "saveChangesButton": "Salvează Modificările",
+    "adCreatedSuccess": "Anunțul \"{title}\" a fost creat cu succes! Redirecționare...",
+    "adUpdatedSuccess": "Anunțul \"{title}\" a fost actualizat cu succes!",
+    "errorCreatingAd": "A apărut o eroare la crearea anunțului.",
+    "errorUpdatingAd": "A apărut o eroare la actualizarea anunțului.",
+    "defaultContactNamePlaceholder": "Implicit numele contului tău",
+    "defaultContactEmailPlaceholder": "Implicit emailul contului tău",
+    "statusDraftOption": "Ciornă (Salvează și publică mai târziu)",
+    "statusPublishedOption": "Publicat (Activează imediat)",
+    "statusArchivedOption": "Arhivat"
+  },
+  "myAdsPage": {
+    "title": "Anunțurile Mele",
+    "postNewAdButton": "Adaugă Anunț Nou",
+    "noAdsYet": "Nu ai postat niciun anunț încă.",
+    "postOneNowLink": "Postează unul acum!",
+    "statusLabel": "Stare:",
+    "editButton": "Modifică",
+    "deleteButtonPlaceholder": "Șterge (în curând)"
+  },
+  "accountPage": {
+    "title": "Cont",
+    "heroText": "Acesta este panoul tău de control. Aici poți actualiza informațiile contului și gestiona anunțurile. Pentru a gestiona toți utilizatorii, ",
+    "myAdsTitle": "Anunțurile Mele",
+    "myAdsDescription": "Gestionează anunțurile postate, vezi starea lor și fă modificări.",
+    "viewMyAdsButton": "Vezi Anunțurile Mele"
+  },
+  "headerNav": {
+    "browseAdsLink": "Anunțuri",
+    "myAdsLink": "Anunțurile Mele",
+    "postAdButton": "Adaugă Anunț",
+    "loginLink": "Autentificare",
+    "createAccountLink": "Creează Cont"
+  }
+}

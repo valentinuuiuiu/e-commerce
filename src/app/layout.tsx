@@ -1,6 +1,8 @@
 import React from 'react'
 import { Metadata } from 'next'
 
+import { ClerkProvider } from '@clerk/nextjs' // Import ClerkProvider
+import { ClerkProvider } from '@clerk/nextjs' // Import ClerkProvider
 import { AdminBar } from './_components/AdminBar'
 import { Footer } from './_components/Footer'
 import { Header } from './_components/Header'

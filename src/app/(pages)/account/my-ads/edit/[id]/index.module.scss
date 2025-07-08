@@ -1,0 +1,20 @@
+@import '../../../../../_css/common';
+
+.container {
+  padding-top: var(--gutter-h);
+  padding-bottom: calc(var(--gutter-h) * 2);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+
+  h1 {
+    margin-bottom: 0; // HR component will provide spacing if used after h1
+  }
+}
+
+.error { // For errors like failing to fetch ad/categories server-side
+  background-color: var(--theme-error-400);
+  color: var(--theme-error-900);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}

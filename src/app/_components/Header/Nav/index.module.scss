@@ -18,3 +18,13 @@
   opacity: 0;
   visibility: hidden;
 }
+
+.postAdButton {
+  // Inherits button styles, but we can add margin or specific tweaks if needed
+  // For example, if using el="link" on Button component, it might need some adjustments
+  // to look like other nav links or stand out as a button.
+  // Assuming Button component with appearance="primary" handles its own styling well.
+  // If it's just a Link styled as a button, ensure padding and alignment match.
+  padding: calc(var(--base) / 2) var(--base); // Example padding if it's just a link
+  font-weight: 600; // Make it slightly bolder
+}

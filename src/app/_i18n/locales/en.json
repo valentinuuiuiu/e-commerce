@@ -1,0 +1,80 @@
+{
+  "homepage": {
+    "welcomeTitle": "Welcome to Your Marketplace!",
+    "welcomeSubtitle": "Find what you need, or sell what you don't.",
+    "postAdButton": "Post an Ad",
+    "browseAdsButton": "Browse Ads",
+    "categoriesTitle": "Categories",
+    "recentAdsTitle": "Recent Ads",
+    "noCategoriesFound": "No categories found.",
+    "noRecentAds": "No recent ads to display.",
+    "viewAllCategoriesLink": "View All Categories",
+    "viewAllAdsLink": "View All Ads"
+  },
+  "adsPage": {
+    "title": "Ads",
+    "noAdsFound": "No ads found.",
+    "priceLabel": "Price:",
+    "locationLabel": "Location:",
+    "typeLabel": "Type:",
+    "viewDetailsButton": "View Details"
+  },
+  "adDetailPage": {
+    "backToAdsLink": "Back to Ads",
+    "descriptionTitle": "Description",
+    "contactSellerTitle": "Contact Seller",
+    "nameLabel": "Name:",
+    "emailLabel": "Email:",
+    "phoneLabel": "Phone:",
+    "contactNotProvided": "Contact information not provided by seller.",
+    "statusLabel": "Status:",
+    "categoriesLabel": "Categories:"
+  },
+  "postAdForm": {
+    "titleLabel": "Title",
+    "descriptionLabel": "Description",
+    "priceLabel": "Price",
+    "currencyLabel": "Currency",
+    "locationLabel": "Location",
+    "adTypeLabel": "Ad Type",
+    "categoriesLabel": "Categories",
+    "contactNameLabel": "Contact Name",
+    "contactPhoneLabel": "Contact Phone",
+    "contactEmailLabel": "Contact Email",
+    "statusLabel": "Status",
+    "createAdButton": "Create Ad",
+    "saveChangesButton": "Save Changes",
+    "adCreatedSuccess": "Ad \"{title}\" created successfully! Redirecting...",
+    "adUpdatedSuccess": "Ad \"{title}\" updated successfully!",
+    "errorCreatingAd": "An error occurred while creating the ad.",
+    "errorUpdatingAd": "An error occurred while updating the ad.",
+    "defaultContactNamePlaceholder": "Defaults to your account name",
+    "defaultContactEmailPlaceholder": "Defaults to your account email",
+    "statusDraftOption": "Draft (Save and publish later)",
+    "statusPublishedOption": "Published (Make it live immediately)",
+    "statusArchivedOption": "Archived"
+  },
+  "myAdsPage": {
+    "title": "My Ads",
+    "postNewAdButton": "Post New Ad",
+    "noAdsYet": "You haven't posted any ads yet.",
+    "postOneNowLink": "Post one now!",
+    "statusLabel": "Status:",
+    "editButton": "Edit",
+    "deleteButtonPlaceholder": "Delete (coming soon)"
+  },
+  "accountPage": {
+    "title": "Account",
+    "heroText": "This is your account dashboard. Here you can update your account information and manage your ads. To manage all users, ",
+    "myAdsTitle": "My Ads",
+    "myAdsDescription": "Manage your posted ads, view their status, and make edits.",
+    "viewMyAdsButton": "View My Ads"
+  },
+  "headerNav": {
+    "browseAdsLink": "Browse Ads",
+    "myAdsLink": "My Ads",
+    "postAdButton": "Post Ad",
+    "loginLink": "Login",
+    "createAccountLink": "Create Account"
+  }
+}

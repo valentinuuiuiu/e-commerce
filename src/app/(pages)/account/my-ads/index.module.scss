@@ -1,0 +1,117 @@
+@import '../../../_css/common';
+
+.container {
+  padding-top: var(--gutter-h);
+  padding-bottom: calc(var(--gutter-h) * 2);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+
+  h1 {
+    margin-bottom: 0; // HR will provide spacing
+  }
+}
+
+.error {
+  background-color: var(--theme-error-400);
+  color: var(--theme-error-900);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.postAdButton {
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.adsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.adItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 8px;
+  background-color: var(--theme-elevation-50);
+  gap: 1rem;
+
+  @include small-break {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.adInfo {
+  flex-grow: 1;
+}
+
+.adTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--theme-text);
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  display: block;
+
+  &:hover {
+    color: var(--theme-primary-500);
+    text-decoration: underline;
+  }
+}
+
+.adMeta {
+  font-size: 0.9rem;
+  color: var(--theme-text-secondary, #555);
+  margin-bottom: 0;
+}
+
+.status {
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  font-size: 0.8em;
+  text-transform: capitalize;
+  font-weight: bold;
+
+  &.draft {
+    background-color: var(--theme-warning-200, #feeac2); // Example colors
+    color: var(--theme-warning-800, #8a5300);
+  }
+  &.published {
+    background-color: var(--theme-success-200, #c9e8c9);
+    color: var(--theme-success-800, #005a00);
+  }
+  &.archived {
+    background-color: var(--theme-elevation-300, #e0e0e0);
+    color: var(--theme-text, #333);
+  }
+}
+
+.adActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-shrink: 0; // Prevent shrinking
+
+  @include small-break {
+    margin-top: 1rem;
+    width: 100%; // Make buttons take more space on small screens if needed
+
+    > * { // Target children of adActions
+        flex-grow: 1; // Make buttons expand
+        text-align: center;
+    }
+  }
+}
+
+.deletePlaceholder {
+    font-size: 0.9rem;
+    color: var(--theme-text-secondary, #777);
+    padding: calc(var(--base) / 1.5) var(--base); // Match button padding roughly
+    border: 1px solid transparent; // Keep layout consistent with buttons
+}
