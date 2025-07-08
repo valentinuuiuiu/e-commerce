@@ -56,9 +56,19 @@ export default async function EditAdPage({ params }: Props) {
     if (!adToEdit) return notFound()
 
     // Check ownership
-    const authorId = typeof adToEdit.author === 'string' ? adToEdit.author : adToEdit.author?.id
-    if (authorId !== user.id && !user.roles?.includes('admin')) {
-       // If not owner and not admin, redirect or show error
+    let authorId: string | undefined;
+    if (adToEdit.author == null) {
+      authorId = undefined;
+    } else if (typeof adToEdit.author === 'string') {
+      authorId = adToEdit.author;
+    } else if (typeof adToEdit.author === 'object' && adToEdit.author.id) {
+      authorId = adToEdit.author.id;
+    } else {
+      authorId = undefined;
+    }
+
+    if (!authorId || (authorId !== user.id && !user.roles?.includes('admin'))) {
+      // If not owner and not admin, redirect or show error
       return redirect(`/account/my-ads?error=${encodeURIComponent("You don't have permission to edit this ad.")}`)
     }
 
