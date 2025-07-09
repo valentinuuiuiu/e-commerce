@@ -43,9 +43,19 @@ dotenv.config({
 
 export default buildConfig({
   admin: {
-    // user: Users.slug, // Removed: Payload admin auth will no longer use the Users collection directly.
-                      // Admin panel access will be managed by Clerk middleware.
-                      // Mapping Clerk users to Payload admin capabilities will be handled differently.
+    // user: Users.slug, // This was removed as Payload's Users collection is gone for auth.
+    // Admin panel access control will now be primarily gated by Clerk middleware for the /admin route,
+    // and this access function for Payload's internal admin permission checks.
+    access: ({ req }: { req: any }) => { // Use 'any' for req to access custom req.auth
+      // Check for a specific role/claim in Clerk's JWT that designates an admin.
+      // This role ('admin_marketplace') must be set in your Clerk dashboard for admin users.
+      // @ts-ignore req.auth might not be typed on default Payload Request type yet
+      if (req.auth && req.auth.userId && req.auth.claims?.metadata?.role === 'admin_marketplace') {
+        return true; // Allow access to Payload admin panel
+      }
+      // Deny access if not a designated Clerk admin, even if they passed Clerk's route protection.
+      return false;
+    },
     bundler: webpackBundler(), // bundler-config
     components: {
       // The `BeforeLogin` component might not be relevant if Clerk handles the login to admin.

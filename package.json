@@ -23,6 +23,7 @@
     "payload": "$(yarn bin cross-env) PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts $(yarn bin payload)"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^5.1.6",
     "@clerk/nextjs": "^6.23.3",
     "@payloadcms/bundler-webpack": "^1.0.0",
     "@payloadcms/db-mongodb": "^1.0.0",

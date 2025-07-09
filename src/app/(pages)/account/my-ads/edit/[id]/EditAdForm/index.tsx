@@ -3,16 +3,17 @@
 import React, { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
+import { useUser, useAuth } from '@clerk/nextjs' // Import Clerk hooks
 
 import { Button } from '../../../../../_components/Button'
 import { Input } from '../../../../../_components/Input'
 import { Message } from '../../../../../_components/Message'
-import { User, Category, Ad } from '../../../../../../payload/payload-types'
+import { Category, Ad } from '../../../../../../payload/payload-types' // User from Payload types no longer needed
 import { UPDATE_AD_MUTATION } from '../../../../../_graphql/ads'
-import { getCookie } from '../../../../../_api/token'
-import RichTextEditor from './RichTextEditor' // Assuming a basic RichText editor component
+// import { getCookie } from '../../../../../_api/token' // Old token method
+// import RichTextEditor from './RichTextEditor' // Assuming a basic RichText editor component - not used currently
 
-import classes from './index.module.scss' // Can reuse PostAdForm styles or create new
+import classes from './index.module.scss'
 
 type AdFormData = {
   title: string
@@ -29,47 +30,32 @@ type AdFormData = {
 }
 
 type Props = {
-  user: User
   ad: Ad // The ad data to pre-fill the form
   categories: Category[]
+  // User prop is no longer needed as we'll use Clerk hooks
 }
 
-// Helper to convert Payload RichText to plain text for textarea (if not using RichText editor)
-// Or, if description is already plain text from Payload, this is not needed.
-const getPlainTextFromRichText = (content: any): string => {
-  if (!content || !content.root || !content.root.children) return ''
-  return content.root.children
-    .map((child: any) =>
-      child.children?.map((grandChild: any) => grandChild.text).join('') || ''
-    )
-    .join('\\n') // Or some other separator
-}
-
-
-export const EditAdForm: React.FC<Props> = ({ user, ad, categories }) => {
+export const EditAdForm: React.FC<Props> = ({ ad, categories }) => {
   const router = useRouter()
+  const { user: clerkUser, isLoaded: isClerkUserLoaded } = useUser() // Clerk hook
+  const { getToken } = useAuth() // Clerk hook
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
-  // Prepare default values for the form
+  // Prepare default values for the form using the passed 'ad' prop
   const defaultValues: Partial<AdFormData> = {
-    title: ad.title || '',
-    // If ad.description is RichText JSON, and your form field is a simple textarea,
-    // you need to convert it. If using a RichText editor, pass the JSON directly.
-    description: typeof ad.description === 'string' ? ad.description : ad.description, // Assuming it's already plain text or handled by editor
-    price: ad.price || 0,
-    currency: ad.currency as 'RON' | 'EUR' || 'RON',
-    location: ad.location || '',
-    adType: ad.adType as 'for-sale' | 'wanted' | 'service' || 'for-sale',
-    categories: (ad.categories?.map(cat => (typeof cat === 'string' ? cat : cat.id)) || []) as string[],
-    contactName: ad.contactName || user?.name || '',
-    contactEmail: ad.contactEmail || user?.email || '',
-    contactPhone: ad.contactPhone || '',
-    status: ad.status as 'draft' | 'published' | 'archived' || 'draft',
+    title: ad?.title || '',
+    description: ad?.description || '', // Assuming description is string (textarea)
+    price: ad?.price || 0,
+    currency: (ad?.currency as 'RON' | 'EUR') || 'RON',
+    location: ad?.location || '',
+    adType: (ad?.adType as 'for-sale' | 'wanted' | 'service') || 'for-sale',
+    categories: (ad?.categories?.map(cat => (typeof cat === 'string' ? cat : cat.id)) || []) as string[],
+    contactName: ad?.contactName || '',
+    contactEmail: ad?.contactEmail || '',
+    contactPhone: ad?.contactPhone || '',
+    status: (ad?.status as 'draft' | 'published' | 'archived') || 'draft',
   }
-
-  // If description is RichText and you want to use a simple textarea (not recommended for editing RT)
-  // defaultValues.description = getPlainTextFromRichText(ad.description);
 
   const {
     register,
@@ -77,26 +63,72 @@ export const EditAdForm: React.FC<Props> = ({ user, ad, categories }) => {
     formState: { errors, isLoading },
     control,
     reset,
-    setValue, // To set RichText editor value if needed
+    setValue,
   } = useForm<AdFormData>({ defaultValues })
 
-  // Handle description: If it's RichText (object), the form needs a RichText editor.
-  // If it was saved as plain text from Payload (e.g. a 'textarea' field type), then string is fine.
-  // The Ad collection has 'description' as 'textarea', so it should be a string.
-
+  // Effect to reset form or prefill contact details if clerkUser loads after initial render
+  // and if the ad's contact fields were empty.
   useEffect(() => {
-    // Reset form with ad data when `ad` prop changes (though typically it won't after initial load)
-    reset(defaultValues)
-  }, [ad, reset])
+    reset(defaultValues); // Initialize/reset form with ad data
+
+    if (isClerkUserLoaded && clerkUser) {
+      // If ad's contact fields are empty, try to prefill from Clerk user
+      if (!defaultValues.contactName) {
+        setValue('contactName', `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || clerkUser.username || '');
+      }
+      if (!defaultValues.contactEmail) {
+        setValue('contactEmail', clerkUser.primaryEmailAddress?.emailAddress || '');
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ad, reset, isClerkUserLoaded, clerkUser, setValue]) // defaultValues is not stable, so ad is the primary dependency
 
 
   const onSubmit = async (data: AdFormData) => {
     setError(null)
     setSuccess(null)
-    const token = getCookie('payload-token')
 
-    // Prepare data for mutation, especially description if it's RichText
-    const mutationVariables: any = { ...data, id: ad.id, price: parseFloat(data.price as any) }
+    if (!isClerkUserLoaded || !clerkUser) {
+      setError("User not fully loaded or not signed in. Please try again.");
+      return;
+    }
+
+    const token = await getToken({ template: 'payload' }); // Get Clerk JWT for Payload
+
+    if (!token) {
+        setError("Authentication token not available. Please ensure you are signed in.");
+        return;
+    }
+
+    // Prepare data for mutation
+    // Omit fields that are empty strings if they are optional and you want them to be undefined
+    const variablesToSubmit: any = { id: ad.id }
+    Object.keys(data).forEach(key => {
+      const formKey = key as keyof AdFormData;
+      if (data[formKey] !== undefined && data[formKey] !== '') { // Only include non-empty/defined values
+        variablesToSubmit[formKey] = data[formKey];
+      }
+    });
+    if (variablesToSubmit.price) {
+      variablesToSubmit.price = parseFloat(variablesToSubmit.price as any);
+    }
+
+
+    // Ensure description is correctly formatted if it was RichText
+    // (Current Ad collection uses 'textarea', so data.description is string)
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/graphql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Use Clerk token
+        },
+        body: JSON.stringify({
+          query: UPDATE_AD_MUTATION,
+          variables: variablesToSubmit,
+        }),
+      })
 
     // If your Payload 'description' field is RichText and you used a simple textarea:
     // you need to convert the string back to Payload RichText JSON format.

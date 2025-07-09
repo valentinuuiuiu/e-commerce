@@ -46,12 +46,17 @@ If you have not done so already, you need to have standalone copy of this repo o
 
 ### Development
 
-1. First [clone the repo](#clone) if you have not done so already
-1. `cd my-project && cp .env.example .env` to copy the example environment variables
-1. `yarn && yarn dev` to install dependencies and start the dev server
-1. `open http://localhost:3000` to open the app in your browser
+1. First [clone the repo](#clone) if you have not done so already.
+2. `cd my-project && cp .env.example .env` to copy the example environment variables.
+   **Important:** Populate `.env` with your actual Payload and Clerk API keys (especially `PAYLOAD_SECRET`, `CLERK_SECRET_KEY`, and `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`).
+3. `yarn && yarn dev` to install dependencies and start the dev server.
+4. `open http://localhost:3000` to open the app in your browser.
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user (e.g., `ionutbaltag3@gmail.com` or your preferred email). The Stripe integration for direct product sales has been altered; see the [Stripe](#stripe) section for its current status. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+That's it! Changes made in `./src` will be reflected in your app.
+- **User Sign-up/Login:** Use the frontend "Create Account" or "Login" links, which will direct you to Clerk's authentication pages.
+- **Admin User Setup:** After signing up with Clerk, to designate a user as a Payload admin, you must set the appropriate custom metadata for that user in your Clerk Dashboard. This template's Payload admin access control (in `src/payload/payload.config.ts`) is configured to look for `publicMetadata: { "role": "admin_marketplace" }`. You can adjust this role name if needed. The user with this role can then access `http://localhost:3000/admin`.
+- The Stripe integration details have been updated; see the [Stripe Integration (Altered)](#stripe-integration-altered) section.
+- Check out [Production](#production) and [Deployment](#deployment) when you're ready.
 
 ## How it works
 
@@ -61,24 +66,23 @@ The Payload config has been adapted for a marketplace/classified ads platform.
 
 See the [Collections](https://payloadcms.com/docs/configuration/collections)  docs for details on how to extend this functionality.
 
-- #### Users (Authentication)
+- #### User Authentication & Management
 
-  Users are auth-enabled. There are two primary roles: `admin` and `user`.
-  - `admin` users can access the Payload admin panel to manage the entire platform (users, ads, categories, site settings).
-  - `user` roles can register, log in, post ads, and manage their own ads through the frontend interface.
-  See [Access Control](#access-control) for more details.
-
-  For additional help on authentication, see the official [Payload Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+  User authentication and management are now handled by **Clerk**.
+  - Users sign up and log in via Clerk's UI.
+  - Access to the Payload Admin panel (`/admin`) and specific administrative functions within Payload are granted based on custom metadata/roles set in Clerk (e.g., a user with `publicMetadata.role: "admin_marketplace"` in Clerk is treated as a Payload admin).
+  - Regular authenticated users can post and manage their own ads through the frontend interface.
+  - The original Payload `Users` collection has been removed. For details on Clerk integration, see [Clerk Documentation](https://clerk.com/docs).
 
 - #### Ads (Replaces Products) <a name="ad-management"></a> <a name="ad-listings"></a>
 
-  This is the core collection for marketplace listings, replacing the original `Products` collection. Key fields include:
+  This is the core collection for marketplace listings. Key fields include:
   - `title`: The title of the ad.
   - `description`: Detailed description of the item/service.
   - `price` & `currency`: Price set by the user.
   - `location`: Location of the item/service.
   - `adType`: Type of ad (e.g., 'For Sale', 'Wanted', 'Service').
-  - `author`: A relationship to the `Users` collection, indicating who posted the ad.
+  - `authorClerkId`: A text field storing the Clerk User ID of the person who posted the ad.
   - `categories`: Relationship to the `Categories` collection.
   - `status`: Draft, Published, Archived.
   - `contactName`, `contactPhone`, `contactEmail`: Optional contact details specific to the ad.
@@ -116,24 +120,21 @@ See the [Globals](https://payloadcms.com/docs/configuration/globals) docs for de
 
 ## Access control
 
-Role-based access control is configured for the marketplace:
+Access control is now primarily managed by Clerk for frontend routes and then by Payload for data operations, using Clerk's user identity:
 
-- `admin`: Can access the Payload admin panel, manage all data (users, ads, categories, etc.).
-- `user`: Can register and log in via the frontend. They can create new ads, and view, edit, or delete their own ads. They cannot access the Payload admin panel.
+- **Frontend Route Protection:** Clerk's Next.js middleware (`src/middleware.ts`) protects routes like `/post-ad` and `/account/**`. Unauthenticated users are redirected to Clerk's sign-in page.
+- **Payload Admin Panel Access (`/admin`):**
+    - Protected by Clerk's Next.js middleware.
+    - Further access within Payload's admin UI is granted if the authenticated Clerk user has a specific role (e.g., `admin_marketplace`) in their Clerk metadata. This is checked by a global `admin.access` function in `payload.config.ts`.
+- **Ads Collection:**
+    - **Create:** Any Clerk-authenticated user can create ads. The `authorClerkId` is automatically set to their Clerk User ID.
+    - **Update/Delete:** Only the user whose Clerk ID matches the `authorClerkId` of an ad, or a user with the designated Clerk admin role, can update or delete that ad.
+    - **Read:** Published ads are publicly readable.
+- **`Categories`, `Pages`, `Media`:**
+    - **Read:** Generally public.
+    - **Create/Update/Delete:** Restricted to users recognized as Payload admins (i.e., Clerk users with the designated admin role).
 
-This applies to collections:
-
-- `Users`:
-    - Admins can manage all users.
-    - Logged-in users can view and update their own profile.
-    - Anyone can create a new user account.
-- `Ads`:
-    - Logged-in users can create ads (author is automatically assigned).
-    - Users can only update or delete ads they authored. Admins can update/delete any ad.
-    - All users (including guests) can read/view published ads.
-- `Categories`, `Pages`, `Media`: Generally readable by anyone; creation/modification restricted to admins.
-
-For more details on extending access control, see the [Payload Access Control](https://payloadcms.com/docs/access-control/overview#access-control) docs.
+For more details on Payload's access control functions, see the [Payload Access Control](https://payloadcms.com/docs/access-control/overview#access-control) docs, but remember that the `user` object in these functions will now be derived from Clerk's `req.auth`.
 
 ## Shopping Cart (Potential Future Use)
 

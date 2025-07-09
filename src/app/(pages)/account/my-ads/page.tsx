@@ -1,28 +1,27 @@
 import React from 'react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { auth } from '@clerk/nextjs/server' // Import auth from Clerk for server components
 
 import { Gutter } from '../../../_components/Gutter'
 import { HR } from '../../../_components/HR'
-import { Button } from '../../../_components/Button' // For Edit/Delete buttons
-import { getMeUser } from '../../../_utilities/getMeUser'
-import { Ads, User } from '../../../../payload/payload-types' // Payload types
-import { ADS_QUERY } from '../../../_graphql/ads' // Re-use ads query
+import { Button } from '../../../_components/Button'
+// import { getMeUser } from '../../../_utilities/getMeUser' // Removed
+import { Ads } from '../../../../payload/payload-types' // User from Payload types no longer needed here
+import { ADS_QUERY } from '../../../_graphql/ads'
 import classes from './index.module.scss'
 // import { AdActions } from './AdActions'; // Client component for delete/edit actions if needed
 
 export default async function MyAdsPage() {
-  const { user } = await getMeUser({
-    nullUserRedirect: `/login?error=${encodeURIComponent(
-      'You must be logged in to view your ads.',
-    )}&redirect=${encodeURIComponent('/account/my-ads')}`,
-  })
+  // Route protection is handled by Clerk middleware.
+  // Get Clerk authenticated userId.
+  const { userId: clerkUserId } = auth();
 
-  if (!user) {
-    // Safeguard redirect, should be handled by getMeUser
-    return redirect(`/login?error=${encodeURIComponent(
-        'You must be logged in to view your ads.',
-      )}&redirect=${encodeURIComponent('/account/my-ads')}`);
+  if (!clerkUserId) {
+    // This case should ideally be handled by Clerk's middleware redirecting to sign-in.
+    // If reached, it's an unexpected state for a protected route.
+    // Consider a redirect or an error message, though middleware should prevent this.
+    // For now, let component render "no ads" or error if data fetching fails.
+    // redirect('/sign-in'); // Or handle as an error
   }
 
   let userAdsData: Ads | null = null
@@ -41,19 +40,18 @@ export default async function MyAdsPage() {
       body: JSON.stringify({
         query: ADS_QUERY, // Using the general ads query
         variables: {
-          limit: 100, // Show more ads, or implement pagination
+          limit: 100,
           sort: '-createdAt',
-          // This 'where' clause assumes direct querying by author ID is possible and efficient.
-          // Payload's default GraphQL might require specific setup for complex 'where' on relationships.
-          // A common pattern is `where: { author: { equals: user.id } }`
           where: {
-            author: {
-              equals: user.id,
+            // Query by the new 'authorClerkId' field
+            authorClerkId: {
+              equals: clerkUserId,
             },
           },
         },
       }),
-      next: { tags: [`my_ads_${user.id}`] }, // Cache tag for revalidation
+      // Use clerkUserId for cache tagging if it's available
+      next: { tags: clerkUserId ? [`my_ads_${clerkUserId}`] : ['my_ads_unknown'] },
     })
 
     if (!response.ok) {

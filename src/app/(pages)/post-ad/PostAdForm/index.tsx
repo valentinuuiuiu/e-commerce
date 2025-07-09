@@ -2,14 +2,15 @@
 
 import React, { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { useRouter } from 'next/navigation' // Changed from next/navigation
+import { useRouter } from 'next/navigation'
+import { useUser, useAuth } from '@clerk/nextjs' // Import Clerk hooks
 
 import { Button } from '../../../_components/Button'
 import { Input } from '../../../_components/Input'
 import { Message } from '../../../_components/Message'
-import { User, Category } from '../../../../payload/payload-types' // Assuming these types exist
+import { Category } from '../../../../payload/payload-types' // User type from Payload is no longer needed here
 import { CREATE_AD_MUTATION } from '../../../_graphql/ads'
-import { getCookie } from '../../../_api/token' // For sending auth token
+// import { getCookie } from '../../../_api/token' // Old token method, Clerk handles tokens via useAuth().getToken()
 
 import classes from './index.module.scss'
 
@@ -27,13 +28,23 @@ type AdFormData = {
   status: 'draft' | 'published'
 }
 
+// Simplified user data structure passed from server component for initial pre-fill
+type InitialUserData = {
+  id: string; // Clerk User ID
+  name: string;
+  email: string;
+} | null;
+
+
 type Props = {
-  user: User
+  initialUserData?: InitialUserData
   categories: Category[]
 }
 
-export const PostAdForm: React.FC<Props> = ({ user, categories }) => {
+export const PostAdForm: React.FC<Props> = ({ initialUserData, categories }) => {
   const router = useRouter()
+  const { user: clerkUser, isLoaded: isClerkUserLoaded } = useUser() // Clerk's useUser hook
+  const { getToken } = useAuth() // Clerk's useAuth hook for getting JWT token
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
@@ -43,28 +54,55 @@ export const PostAdForm: React.FC<Props> = ({ user, categories }) => {
     formState: { errors, isLoading },
     control,
     reset,
+    setValue, // To set values after Clerk user loads
   } = useForm<AdFormData>({
     defaultValues: {
       currency: 'RON',
-      status: 'draft', // Default to draft
-      contactName: user?.name || '',
-      contactEmail: user?.email || '',
+      status: 'draft',
+      contactName: initialUserData?.name || '',
+      contactEmail: initialUserData?.email || '',
       categories: [],
     }
   })
+
+  // Pre-fill contact details once Clerk user data is loaded on the client, if not already set
+  useEffect(() => {
+    if (isClerkUserLoaded && clerkUser) {
+      // Only set if the form field is currently empty or matches initial (potentially null) server data
+      // This avoids overriding user's input if they start typing before Clerk loads.
+      const currentFormValues = control._formValues; // react-hook-form internal, use with caution or getValues()
+      if (!currentFormValues.contactName || currentFormValues.contactName === initialUserData?.name) {
+        setValue('contactName', `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || clerkUser.username || '');
+      }
+      if (!currentFormValues.contactEmail || currentFormValues.contactEmail === initialUserData?.email) {
+        setValue('contactEmail', clerkUser.primaryEmailAddress?.emailAddress || '');
+      }
+    }
+  }, [isClerkUserLoaded, clerkUser, setValue, initialUserData, control._formValues])
+
 
   const onSubmit = async (data: AdFormData) => {
     setError(null)
     setSuccess(null)
 
-    const token = getCookie('payload-token') // Get auth token
+    if (!isClerkUserLoaded || !clerkUser) {
+      setError("User not fully loaded or not signed in. Please try again.");
+      return;
+    }
+
+    const token = await getToken({ template: 'payload' }); // Get Clerk token for Payload
+
+    if (!token) {
+        setError("Authentication token not available. Please ensure you are signed in.");
+        return;
+    }
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/graphql`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { Authorization: `JWT ${token}` }), // Add token if available
+          'Authorization': `Bearer ${token}`, // Use Clerk token
         },
         body: JSON.stringify({
           query: CREATE_AD_MUTATION,

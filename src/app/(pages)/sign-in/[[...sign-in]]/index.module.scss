@@ -1,0 +1,17 @@
+@import '../../../../_css/common';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; // Align to top, let Clerk component define its own height
+  padding-top: calc(var(--base) * 3);
+  padding-bottom: calc(var(--base) * 3);
+  min-height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 60px)); // Ensure it takes up space
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 400px; // Or whatever max-width fits Clerk's component well
+  // Clerk's <SignIn /> component has its own styling, this container is mostly for positioning.
+}
